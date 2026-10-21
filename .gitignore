@@ -1,0 +1,28 @@
+# Local app data — contains customer ICs, Firebase session tokens and backups
+data/
+*.db
+*.db-wal
+*.db-shm
+
+# Build outputs
+LoanTrack.exe
+build/
+dist/
+*.spec
+__pycache__/
+*.pyc
+
+# Local CLI / test artifacts
+.firebase/
+.firebase-chrome/
+firebase-debug.log
+_webtest/
+_desktest/
+_scratch/
+_scratch2/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

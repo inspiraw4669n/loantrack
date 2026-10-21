@@ -1,0 +1,17 @@
+{
+  "name": "LoanTrack — Pemantau Pinjaman",
+  "short_name": "LoanTrack",
+  "description": "Pantau permohonan pinjaman kereta anda.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B1424",
+  "theme_color": "#0B1424",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

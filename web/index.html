@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0B1424">
+  <meta name="description" content="LoanTrack — pantau permohonan pinjaman kereta anda dari mana-mana.">
+  <title>LoanTrack — Pemantau Pinjaman</title>
+  <link rel="icon" href="/icon.png">
+  <link rel="apple-touch-icon" href="/icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <div id="boot" class="boot">
+    <div class="boot-mark">LT</div>
+    <div class="spinner" aria-hidden="true"></div>
+    <p>Memuatkan LoanTrack…</p>
+  </div>
+
+  <!-- ================================================== AUTH ========== -->
+  <section id="auth-screen" class="auth-screen" hidden>
+    <div class="auth-marketing">
+      <div class="auth-glow auth-glow-a"></div>
+      <div class="auth-glow auth-glow-b"></div>
+      <div class="brand brand-on-dark">
+        <span class="logo">LT</span>
+        <span class="brand-text"><strong>LoanTrack</strong><small>Pemantau Pinjaman</small></span>
+      </div>
+      <div class="marketing-copy">
+        <p class="kicker">PEMANTAU PINJAMAN KERETA</p>
+        <h1>Setiap permohonan,<br>di bawah kawalan.</h1>
+        <p class="marketing-sub">Pantau status pinjaman, sejarah kelulusan dan pelanggan anda — dari desktop atau telefon.</p>
+        <ul class="feature-list">
+          <li><span class="feature-check">✓</span> Status dan sejarah dikemas kini secara langsung</li>
+          <li><span class="feature-check">✓</span> Data disimpan dalam projek Firebase anda sendiri</li>
+          <li><span class="feature-check">✓</span> Boleh diakses dari mana-mana peranti</li>
+        </ul>
+      </div>
+      <p class="marketing-foot">Akses peribadi · disegerakkan dengan Firestore</p>
+    </div>
+
+    <div class="auth-panel">
+      <div class="auth-card">
+        <div class="brand brand-mobile">
+          <span class="logo">LT</span>
+          <span class="brand-text"><strong>LoanTrack</strong><small>Pemantau Pinjaman</small></span>
+        </div>
+        <div class="auth-heading">
+          <p class="eyebrow" id="auth-eyebrow">SELAMAT KEMBALI</p>
+          <h2 id="auth-title">Log masuk</h2>
+          <p id="auth-subtitle">Akses rekod pinjaman anda.</p>
+        </div>
+        <form id="auth-form" novalidate>
+          <div class="field">
+            <label for="auth-email">Email</label>
+            <input id="auth-email" type="email" inputmode="email" autocomplete="email"
+                   placeholder="nama@email.com" required>
+          </div>
+          <div class="field">
+            <label for="auth-password">Kata laluan</label>
+            <div class="password-field">
+              <input id="auth-password" type="password" autocomplete="current-password"
+                     placeholder="Masukkan kata laluan" required>
+              <button id="toggle-password" class="password-toggle" type="button"
+                      aria-label="Tunjuk kata laluan">Tunjuk</button>
+            </div>
+          </div>
+          <div id="auth-error" class="form-error" role="alert" hidden></div>
+          <button id="auth-submit" class="btn btn-primary btn-block" type="submit">
+            Log masuk
+          </button>
+        </form>
+        <div class="auth-links">
+          <button id="forgot-btn" class="link-btn" type="button">Lupa kata laluan?</button>
+          <button id="switch-auth" class="link-btn" type="button">Daftar akaun baharu</button>
+        </div>
+        <p class="auth-note">Data anda disimpan dalam projek Firebase <strong>anda</strong>. Kata laluan tidak disimpan oleh LoanTrack.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================== APP =========== -->
+  <div id="app-screen" class="app-shell" hidden>
+    <aside class="sidebar">
+      <div class="brand brand-on-dark sidebar-brand">
+        <span class="logo">LT</span>
+        <span class="brand-text"><strong>LoanTrack</strong><small>Pemantau Pinjaman</small></span>
+      </div>
+
+      <nav class="nav" aria-label="Tapis status">
+        <button class="nav-item is-active" data-filter="" type="button">
+          <span class="nav-dot" style="background:#3B82F6"></span>
+          <span class="nav-label">Semua Pinjaman</span>
+          <span class="nav-count" id="count-all">0</span>
+        </button>
+        <div class="nav-section">STATUS</div>
+        <div id="nav-statuses"></div>
+      </nav>
+
+      <div class="sidebar-foot">
+        <div class="live-pill"><span class="live-dot"></span><span>Data langsung</span></div>
+        <div class="account-card">
+          <div class="account-avatar" id="account-avatar">?</div>
+          <div class="account-meta">
+            <div class="account-email" id="account-email">—</div>
+            <div class="account-label">Akaun Firebase</div>
+          </div>
+          <button id="logout-btn" class="icon-btn logout-btn" type="button"
+                  title="Log keluar" aria-label="Log keluar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="mobile-topbar">
+        <div class="brand brand-on-dark">
+          <span class="logo logo-sm">LT</span>
+          <span class="brand-text"><strong>LoanTrack</strong></span>
+        </div>
+        <div class="mobile-top-actions">
+          <span class="live-pill live-pill-mobile"><span class="live-dot"></span> Langsung</span>
+          <button id="mobile-logout" class="icon-btn" type="button" aria-label="Log keluar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <header class="page-header">
+        <div class="heading">
+          <p class="eyebrow" id="today-label"></p>
+          <h1 id="page-title">Semua Pinjaman</h1>
+          <p class="page-sub" id="page-subtitle">Memuatkan rekod…</p>
+        </div>
+        <div class="header-actions">
+          <button id="export-btn" class="btn btn-ghost" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 17v3h14v-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Eksport CSV
+          </button>
+          <button id="add-btn" class="btn btn-primary" type="button">
+            <span class="plus">+</span> Tambah Pinjaman
+          </button>
+        </div>
+      </header>
+
+      <div id="mobile-filters" class="mobile-filters" aria-label="Tapis status"></div>
+      <div id="banner" class="banner" role="alert" hidden></div>
+
+      <section class="stats" aria-label="Ringkasan">
+        <article class="stat-card">
+          <div class="stat-icon icon-blue">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7zM14 3v5h5M10 12h5M10 16h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="stat-copy">
+            <div class="stat-label">JUMLAH REKOD</div>
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-caption" id="stat-total-caption">Belum ada rekod</div>
+          </div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon icon-amber">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </div>
+          <div class="stat-copy">
+            <div class="stat-label">DALAM PROSES</div>
+            <div class="stat-value" id="stat-process">0</div>
+            <div class="stat-caption" id="stat-process-caption">Tiada tindakan tertunggak</div>
+          </div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon icon-green">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m8 12 2.7 2.7L16.5 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="stat-copy">
+            <div class="stat-label">DILULUSKAN</div>
+            <div class="stat-value" id="stat-approved">0</div>
+            <div class="stat-caption" id="stat-approved-caption">Belum ada kelulusan</div>
+          </div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon icon-rose">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m9 9 6 6M15 9l-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </div>
+          <div class="stat-copy">
+            <div class="stat-label">DITOLAK</div>
+            <div class="stat-value" id="stat-rejected">0</div>
+            <div class="stat-caption" id="stat-rejected-caption">—</div>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel" aria-label="Senarai pinjaman">
+        <div class="panel-top">
+          <div class="panel-title-row">
+            <h2>Senarai Pinjaman</h2>
+            <span id="count-badge" class="count-badge">0</span>
+            <span class="panel-hint">Klik untuk butiran</span>
+          </div>
+          <div class="search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <input id="search-input" type="search" autocomplete="off"
+                   placeholder="Cari nama, IC, kereta atau bank…" aria-label="Cari pinjaman">
+            <button id="clear-search" class="search-clear" type="button" aria-label="Kosongkan carian" hidden>×</button>
+          </div>
+        </div>
+        <div class="table-head" aria-hidden="true">
+          <span>PEMOHON</span><span>NO. IC</span><span>BANK</span>
+          <span class="right">JUMLAH</span><span>TARIKH</span><span>STATUS</span><span></span>
+        </div>
+        <div id="loan-list" class="loan-list" role="list"></div>
+        <div id="empty-state" class="empty" hidden>
+          <div class="empty-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7zM14 3v5h5M10 12h5M10 16h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3 id="empty-title">Belum ada rekod pinjaman</h3>
+          <p id="empty-body">Tambah rekod pertama anda untuk mula memantau status pinjaman.</p>
+          <button id="empty-action" class="btn btn-primary" type="button">+ Tambah Pinjaman</button>
+        </div>
+      </section>
+
+      <footer class="main-foot">
+        <span><span class="live-dot"></span> Dissegerakkan secara langsung dengan Firestore.</span>
+        <span id="project-label">loanstatus-bc769</span>
+      </footer>
+    </main>
+  </div>
+
+  <!-- ================================================== DIALOG ======== -->
+  <dialog id="loan-dialog" class="dialog">
+    <form id="loan-form" novalidate>
+      <header class="dialog-head">
+        <div>
+          <h2 id="dialog-title">Tambah Pinjaman Baharu</h2>
+          <p id="dialog-subtitle">Masukkan butiran permohonan pelanggan.</p>
+        </div>
+        <button id="dialog-close" class="icon-btn dialog-close" type="button" aria-label="Tutup">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </header>
+
+      <div class="dialog-body" id="dialog-body">
+        <div class="form-grid">
+          <div class="field span-2">
+            <label for="f-name">Nama Penuh</label>
+            <input id="f-name" type="text" autocomplete="off" placeholder="Nama penuh pemohon">
+          </div>
+          <div class="field">
+            <label for="f-ic">No. Kad Pengenalan</label>
+            <input id="f-ic" type="text" inputmode="numeric" autocomplete="off" placeholder="cth. 900101-14-5678">
+          </div>
+          <div class="field">
+            <label for="f-car">Jenis Kereta</label>
+            <input id="f-car" type="text" autocomplete="off" placeholder="cth. Perodua Myvi 1.5">
+          </div>
+          <div class="field">
+            <label for="f-bank">Bank</label>
+            <input id="f-bank" type="text" autocomplete="off" list="bank-list" placeholder="Pilih atau taip nama bank">
+            <datalist id="bank-list"></datalist>
+          </div>
+          <div class="field">
+            <label for="f-amount">Jumlah Pinjaman (RM)</label>
+            <div class="input-prefix">
+              <span>RM</span>
+              <input id="f-amount" type="number" min="0" step="0.01" autocomplete="off" placeholder="0">
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-date">Tarikh Mohon</label>
+            <input id="f-date" type="date">
+            <div class="field-hint" id="date-hint"></div>
+          </div>
+          <div class="field">
+            <label for="f-status">Status</label>
+            <select id="f-status"></select>
+          </div>
+          <div class="field span-2">
+            <label for="f-notes">Catatan (pilihan)</label>
+            <textarea id="f-notes" rows="3" placeholder="Nota tambahan, dokumen, dsb."></textarea>
+          </div>
+        </div>
+
+        <aside class="history-panel" id="history-panel">
+          <div class="history-head">
+            <h3>Sejarah Status</h3>
+            <p>Direkodkan secara automatik.</p>
+          </div>
+          <div id="history-list" class="history-list"></div>
+          <div id="history-empty" class="history-empty">Sejarah akan direkodkan selepas rekod disimpan.</div>
+        </aside>
+      </div>
+
+      <footer class="dialog-foot">
+        <button id="delete-btn" class="btn btn-danger-ghost" type="button" hidden>Padam</button>
+        <div id="dialog-error" class="dialog-error" role="alert" hidden></div>
+        <button id="dialog-cancel" class="btn btn-ghost" type="button">Batal</button>
+        <button id="save-btn" class="btn btn-primary" type="submit">Simpan</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden>
+    <span class="toast-check">✓</span><span id="toast-text"></span>
+  </div>
+
+  <noscript>
+    <div class="noscript">LoanTrack memerlukan JavaScript. Sila aktifkan JavaScript dalam pelayar anda.</div>
+  </noscript>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
